@@ -114,7 +114,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
    renderer.init(hWnd);
-   renderer.addBox(Point(0,0,0, 0x00ff0000));
+   renderer.addBox(Point(0,0,-2, 0x00ff0000));
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 

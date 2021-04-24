@@ -1,4 +1,5 @@
 #pragma once
+#include<iostream>
 #include <vector>
 
 #include <d3d9.h>
@@ -6,7 +7,7 @@
 #include <d3dx9.h>
 #pragma comment(lib, "d3dx9.lib")
 
-// класс точка (вектор)
+// struct point (3d vector with color)
 struct Point
 {
 	float x, y, z;
@@ -15,7 +16,7 @@ struct Point
 	Point(float x_, float y_, float z_, DWORD c_) :x(x_), y(y_), z(z_), c(c_) {}
 };
 
-// класс поверхность (4 точки)
+// struct surface (consist 4 points)
 struct Surface
 {
 	Point p[4];
@@ -24,14 +25,14 @@ struct Surface
 	Surface(Point p0, Point p1, Point p2, Point p3) : p{p0, p1,p2,p3} {}
 };
 
-/* должен был бы быть класс точка текстуры
+// struct texture point (has coordinates u and v)
 struct PointTex
 {
 	float x, y, z;
 	float u, v;
 };
-*/
-// класс коробка (кубик)
+
+// class box (cube - has 6 surfaces)
 class Box
 {
 public:
@@ -41,43 +42,43 @@ public:
 		Box(Point())
 	{}
 
-	Box(Point c_) // неного кривой способ задания поверхностей
+	Box(Point c_) // we set central point of cube (size of cube is 1)
 	{
-		s[0] = Surface
+		s[0] = Surface // for this example sides of cube have red green and blue colours
 		(
-			Point(c_.x - 0.5, c_.y - 0.5, c_.z - 0.5, 0x00ff0000), 
-			Point(c_.x - 0.5, c_.y - 0.5, c_.z + 0.5, 0x00ff0000),
-			Point(c_.x + 0.5, c_.y - 0.5, c_.z + 0.5, 0x00ff0000),
-			Point(c_.x + 0.5, c_.y - 0.5, c_.z - 0.5, 0x00ff0000)
+			Point(c_.x - 0.5, c_.y - 0.5, c_.z - 0.5, 0x0000ff00), 
+			Point(c_.x - 0.5, c_.y - 0.5, c_.z + 0.5, 0x0000ff00), // green
+			Point(c_.x + 0.5, c_.y - 0.5, c_.z + 0.5, 0x0000ff00),
+			Point(c_.x + 0.5, c_.y - 0.5, c_.z - 0.5, 0x0000ff00)
 		);
 		s[1] = Surface
 		(
-			Point(c_.x - 0.5, c_.y + 0.5, c_.z - 0.5, 0x00ff0000),
-			Point(c_.x - 0.5, c_.y + 0.5, c_.z + 0.5, 0x00ff0000),
-			Point(c_.x + 0.5, c_.y + 0.5, c_.z + 0.5, 0x00ff0000),
-			Point(c_.x + 0.5, c_.y + 0.5, c_.z - 0.5, 0x00ff0000)
+			Point(c_.x - 0.5, c_.y + 0.5, c_.z - 0.5, 0x0000ff00),
+			Point(c_.x - 0.5, c_.y + 0.5, c_.z + 0.5, 0x0000ff00),
+			Point(c_.x + 0.5, c_.y + 0.5, c_.z + 0.5, 0x0000ff00),
+			Point(c_.x + 0.5, c_.y + 0.5, c_.z - 0.5, 0x0000ff00)
 		);
 
 		s[2] = Surface
 		(
-			Point(c_.x - 0.5, c_.y - 0.5, c_.z - 0.5, 0x0000ff00),
-			Point(c_.x - 0.5, c_.y - 0.5, c_.z + 0.5, 0x0000ff00),
-			Point(c_.x - 0.5, c_.y + 0.5, c_.z + 0.5, 0x0000ff00),
-			Point(c_.x - 0.5, c_.y + 0.5, c_.z - 0.5, 0x0000ff00)
+			Point(c_.x - 0.5, c_.y - 0.5, c_.z - 0.5, 0x00ff0000),
+			Point(c_.x - 0.5, c_.y - 0.5, c_.z + 0.5, 0x00ff0000),  // red
+			Point(c_.x - 0.5, c_.y + 0.5, c_.z + 0.5, 0x00ff0000),
+			Point(c_.x - 0.5, c_.y + 0.5, c_.z - 0.5, 0x00ff0000)
 		);
 
 		s[3] = Surface
 		(
-			Point(c_.x + 0.5, c_.y - 0.5, c_.z - 0.5, 0x0000ff00),
-			Point(c_.x + 0.5, c_.y - 0.5, c_.z + 0.5, 0x0000ff00),
-			Point(c_.x + 0.5, c_.y + 0.5, c_.z + 0.5, 0x0000ff00),
-			Point(c_.x + 0.5, c_.y + 0.5, c_.z - 0.5, 0x0000ff00)
+			Point(c_.x + 0.5, c_.y - 0.5, c_.z - 0.5, 0x00ff0000),
+			Point(c_.x + 0.5, c_.y - 0.5, c_.z + 0.5, 0x00ff0000),
+			Point(c_.x + 0.5, c_.y + 0.5, c_.z + 0.5, 0x00ff0000),
+			Point(c_.x + 0.5, c_.y + 0.5, c_.z - 0.5, 0x00ff0000)
 		);
 
 		s[4] = Surface
 		(
 			Point(c_.x - 0.5, c_.y - 0.5, c_.z - 0.5, 0x000000ff),
-			Point(c_.x + 0.5, c_.y - 0.5, c_.z - 0.5, 0x000000ff),
+			Point(c_.x + 0.5, c_.y - 0.5, c_.z - 0.5, 0x000000ff),  // blue
 			Point(c_.x + 0.5, c_.y + 0.5, c_.z - 0.5, 0x000000ff),
 			Point(c_.x - 0.5, c_.y + 0.5, c_.z - 0.5, 0x000000ff)
 		);
@@ -92,7 +93,7 @@ public:
 	}
 };
 
-/* класс треугольник для отображения примитива
+// class triangle for rendering 
 class Tri
 {
 public:
@@ -105,40 +106,42 @@ public:
 		p[2].x = 0 ;  p[2].y = c.y + 2.5; p[2].z = 0; p[2].c = 0x0000ffff;
 	}
 };
-*/
 
-// главный класс для работы с графикой
+
+// main class for rendering graphic for direcx 3d
 class Renderer
 {
 public:
 	// материалы и текстуры для вывода текстур в будуще
 	//D3DMATERIAL9* material; 
-	//IDirect3DTexture9* texTop;
-	//IDirect3DTexture9* texSide;
-	//IDirect3DTexture9* texBottom;
+	// it's our textures of block (box) textures from minecraft
+	IDirect3DTexture9* texTop;
+	IDirect3DTexture9* texSide;
+	IDirect3DTexture9* texBottom;
 
-	//std::vector<Box*> block; // в будущем тут будет много блоков как в майнкрафте
+	std::vector<Box*> block; // в будущем тут будет много блоков как в майнкрафте
 
-	// буферы вершин индексов и вершин текстур
+	// vertexes and indices buffers
 	LPDIRECT3DVERTEXBUFFER9 vertexBuff = NULL; 
 	LPDIRECT3DINDEXBUFFER9 indBuff = NULL;
-	//LPDIRECT3DVERTEXBUFFER9 vertexTexBuff = NULL;
+	LPDIRECT3DVERTEXBUFFER9 vertexTexBuff = NULL;
 
 	int nVertex; 
 	int nInd;
 	int nTri;
-//	std::vector <float3> point;
-	//std::vec
 
+	// devices
 	IDirect3D9* d3d = nullptr;
 	IDirect3DDevice9* device = nullptr;
 
 	float viewAngle = 0.0; //угол поворота мировой атрицы
 
+	// resolution and windowed mode
 	bool windowed = true;
 	int width = 800;
 	int height = 600;
 
+	// handler of main window
 	HWND hWnd = NULL;
 
 	Renderer()
@@ -146,11 +149,13 @@ public:
 
 	void init(HWND& hWnd_)
 	{
-		// все стандартно...
+		// standart using....
 		hWnd = hWnd_;
-		if((d3d = Direct3DCreate9(D3D_SDK_VERSION)) == nullptr)
-			return ;
-
+		if ((d3d = Direct3DCreate9(D3D_SDK_VERSION)) == nullptr)
+		{
+			std::cout << "Error initialization directX\n";
+			return;
+		}
 		D3DPRESENT_PARAMETERS presentParams;
 		ZeroMemory(&presentParams, sizeof(presentParams));
 		presentParams.BackBufferWidth = width;
@@ -181,52 +186,54 @@ public:
 			&presentParams,
 			&device
 		);
-		// без освещения и глубины (z)
+		// not use lighting and depth buffer
 		device->SetRenderState(D3DRS_LIGHTING, FALSE);  
-		device->SetRenderState(D3DRS_ZENABLE, FALSE);
+		device->SetRenderState(D3DRS_ZENABLE, TRUE);
 
-		// матрица проекции 
+		// projection matrix
 		D3DXMATRIX matrixProjection;
 		float aspect = width / height;
-		D3DXMatrixPerspectiveFovLH(&matrixProjection, D3DX_PI / 4.0, aspect, 0.1, 1000.0);
+		float minDist = 0.1; // min and max distance for camera proection
+		float maxDist = 1000.0;
+		D3DXMatrixPerspectiveFovLH(&matrixProjection, D3DX_PI / 4.0, aspect, minDist, maxDist);
 		device->SetTransform(D3DTS_PROJECTION, &matrixProjection);
 
-	//	loadTextures(); загрузка текстур будет тут
+		loadTextures();
 
-		device->CreateVertexBuffer // грузим вершинный буфер, точек побольше
+		device->CreateVertexBuffer // load vertex buffer
 		(
-			10000 * sizeof(Point), // резерв в 10000 точек
+			10000 * sizeof(Point), // reserve 10000 points
 			0,
-			D3DFVF_XYZ | D3DFVF_DIFFUSE,		  // Буфер будет хранить координаты XYZ
-			D3DPOOL_DEFAULT,          // Размещение в пуле по умолчанию
-			&vertexBuff,           // Указатель на объект, куда будем помещен буфер
+			D3DFVF_XYZ | D3DFVF_DIFFUSE,
+			D3DPOOL_DEFAULT,         
+			&vertexBuff,           // address of vertex buffer
 			NULL
 		);
 		
-		device->CreateIndexBuffer // грузим буфер индексов
+		device->CreateIndexBuffer // load indices buffer
 		(
-			sizeof(short) * 10000, //резерв 10000 шортов
+			sizeof(short) * 10000, // reserve 10000 shorts
 			D3DUSAGE_WRITEONLY,
 			D3DFMT_INDEX16,
 			D3DPOOL_DEFAULT,
-			&indBuff,
+			&indBuff, // to indices buffer
 			0
 		);
-		/* должны были бы грузить буфер вершин текстур
+		// and buffer of texture points
 		device->CreateVertexBuffer
 		(
-			10000 * sizeof(PointTex), // Необходимое количество байт
+			10000 * sizeof(PointTex), // reserve 10000 points
 			D3DUSAGE_WRITEONLY,
-			D3DFVF_XYZ | D3DFVF_TEX1,		  // Буфер будет хранить координаты XYZ
-			D3DPOOL_DEFAULT,          // Размещение в пуле по умолчанию
-			&vertexTexBuff,           // Указатель на объект, куда будем помещен буфер
+			D3DFVF_XYZ | D3DFVF_TEX1,		  
+			D3DPOOL_DEFAULT,         
+			&vertexTexBuff,        
 			NULL
 		);
-		*/
+		
 	}
-	/*
+	
 	void loadTextures()
-	{ // здесь грузим текстуры травы из майнкрафта...
+	{ // it is textures of minecraft grass. but you can put either images for bottom top and sides
 		D3DXCreateTextureFromFile 
 		(
 			device,
@@ -248,10 +255,10 @@ public:
 			&texTop
 		);
 
-	}*/
+	}
 
 	~Renderer()
-	{
+	{ //  may be we need kill buffer of textures and other
 		if (device)
 		{
 			device->Release();
@@ -264,23 +271,23 @@ public:
 		}
 	}
 
-	// добавляем ящик 
+	// add box...
 	void addBox(Point c)
 	{
 		int nVertexNew = 24;
 		int nIndNew = 36;
 		int nTriNew = 12;
-		Box box(Point(0, 0, 0, 0xffff0000));
+		//Box box(Point(0, 0, 0, 0xffff0000));
 
-		//block.push_back(new Box(c));
+		block.push_back(new Box(c));
 
-	//	auto& box = block.back();
+		auto& box = block.back();
 		//Tri tri;
 
 		void* pBuff = NULL;
-		// собираем буфер вершин
+		// copy points
 		vertexBuff->Lock(0, sizeof(Point) * 6 * 4, &pBuff, 0);
-		memcpy(pBuff, box.s, 6 * 4 * sizeof(Point));
+		memcpy(pBuff, box->s, 6 * 4 * sizeof(Point));
 		vertexBuff->Unlock();
 		
 		// здесь сидят сарфейсы
@@ -306,31 +313,74 @@ public:
 		nTri += 12;
 		nVertex += nVertexNew;
 
-		// код внизу - неудавшаяся попытка прикрутить текстуры к сторонам ящика
-		/*PointTex texPoint[4];
-		texPoint[0].x = 0.0; texPoint[0].y = 0.0; texPoint[0].z = 0.0; texPoint[0].u = 0.0; texPoint[0].v = 0.0;
-		texPoint[1].x = 1.0; texPoint[1].y = 0.0; texPoint[1].z = 0.0; texPoint[1].u = 1.0; texPoint[1].v = 0.0;
-		texPoint[2].x = 1.0; texPoint[2].y = 1.0; texPoint[2].z = 0.0; texPoint[2].u = 1.0; texPoint[2].v = 1.0;
-		texPoint[3].x = 0.0; texPoint[3].y = 1.0; texPoint[3].z = 0.0; texPoint[3].u = 0.0; texPoint[3].v = 1.0;
+		// bottom
+		PointTex texPoint[4];
+
+		texPoint[0].x = 1.0; texPoint[0].y = 0.0; texPoint[0].z = 0.0; texPoint[0].u = 0.0; texPoint[0].v = 0.0;
+		texPoint[1].x = 1.0; texPoint[1].y = 0.0; texPoint[1].z = 1.0; texPoint[1].u = 1.0; texPoint[1].v = 0.0;
+		texPoint[2].x = 0.0; texPoint[2].y = 0.0; texPoint[2].z = 0.0; texPoint[2].u = 0.0; texPoint[2].v = 1.0;
+		texPoint[3].x = 0.0; texPoint[3].y = 0.0; texPoint[3].z = 1.0; texPoint[3].u = 1.0; texPoint[3].v = 1.0;
 
 		vertexTexBuff->Lock(0, sizeof(PointTex)* 4, &pBuff, 0);
 		memcpy(pBuff, texPoint, 4 * sizeof(PointTex));
 		vertexTexBuff->Unlock();
 
-		texPoint[0].x = 0.0; texPoint[0].y = 0.0; texPoint[0].z = 1.0; texPoint[0].u = 1.0; texPoint[0].v = 0.0;
-		texPoint[1].x = 1.0; texPoint[1].y = 0.0; texPoint[1].z = 1.0; texPoint[1].u = 0.0; texPoint[1].v = 1.0;
-		texPoint[2].x = 1.0; texPoint[2].y = 1.0; texPoint[2].z = 1.0; texPoint[2].u = 0.0; texPoint[2].v = 0.0;
-		texPoint[3].x = 0.0; texPoint[3].y = 1.0; texPoint[3].z = 1.0; texPoint[3].u = 1.0; texPoint[3].v = 1.0;
+		// side z = 1
+		texPoint[0].x = 1.0; texPoint[0].y = 1.0; texPoint[0].z = 1.0; texPoint[0].u = 0.0; texPoint[0].v = 0.0;
+		texPoint[1].x = 0.0; texPoint[1].y = 1.0; texPoint[1].z = 1.0; texPoint[1].u = 1.0; texPoint[1].v = 0.0;
+		texPoint[2].x = 1.0; texPoint[2].y = 0.0; texPoint[2].z = 1.0; texPoint[2].u = 0.0; texPoint[2].v = 1.0;
+		texPoint[3].x = 0.0; texPoint[3].y = 0.0; texPoint[3].z = 1.0; texPoint[3].u = 1.0; texPoint[3].v = 1.0;
 
 		vertexTexBuff->Lock(sizeof(PointTex) * 4, sizeof(PointTex) * 4, &pBuff, 0);
 		memcpy(pBuff, texPoint, 4 * sizeof(PointTex));
 		vertexTexBuff->Unlock();
-		*/
 
-		// смещаем вид
+		// side z = 0
+		texPoint[0].x = 1.0; texPoint[0].y = 0.0; texPoint[0].z = 0.0; texPoint[0].u = 0.0; texPoint[0].v = 1.0;
+		texPoint[1].x = 0.0; texPoint[1].y = 0.0; texPoint[1].z = 0.0; texPoint[1].u = 1.0; texPoint[1].v = 1.0;
+		texPoint[2].x = 1.0; texPoint[2].y = 1.0; texPoint[2].z = 0.0; texPoint[2].u = 0.0; texPoint[2].v = 0.0;
+		texPoint[3].x = 0.0; texPoint[3].y = 1.0; texPoint[3].z = 0.0; texPoint[3].u = 1.0; texPoint[3].v = 0.0;
+
+		vertexTexBuff->Lock(sizeof(PointTex) * 4 * 2, sizeof(PointTex) * 4, &pBuff, 0);
+		memcpy(pBuff, texPoint, 4 * sizeof(PointTex));
+		vertexTexBuff->Unlock();
+		
+		// side x= 0
+		texPoint[0].x = 0.0; texPoint[0].y = 0.0; texPoint[0].z = 0.0; texPoint[0].u = 0.0; texPoint[0].v = 1.0;
+		texPoint[1].x = 0.0; texPoint[1].y = 0.0; texPoint[1].z = 1.0; texPoint[1].u = 1.0; texPoint[1].v = 1.0;
+		texPoint[2].x = 0.0; texPoint[2].y = 1.0; texPoint[2].z = 0.0; texPoint[2].u = 0.0; texPoint[2].v = 0.0;
+		texPoint[3].x = 0.0; texPoint[3].y = 1.0; texPoint[3].z = 1.0; texPoint[3].u = 1.0; texPoint[3].v = 0.0;
+
+		vertexTexBuff->Lock(sizeof(PointTex) * 4 * 3, sizeof(PointTex) * 4, &pBuff, 0);
+		memcpy(pBuff, texPoint, 4 * sizeof(PointTex));
+		vertexTexBuff->Unlock();
+
+		// side x= 1
+		texPoint[0].x = 1.0; texPoint[0].y = 0.0; texPoint[0].z = 1.0; texPoint[0].u = 0.0; texPoint[0].v = 1.0;
+		texPoint[1].x = 1.0; texPoint[1].y = 0.0; texPoint[1].z = 0.0; texPoint[1].u = 1.0; texPoint[1].v = 1.0;
+		texPoint[2].x = 1.0; texPoint[2].y = 1.0; texPoint[2].z = 1.0; texPoint[2].u = 0.0; texPoint[2].v = 0.0;
+		texPoint[3].x = 1.0; texPoint[3].y = 1.0; texPoint[3].z = 0.0; texPoint[3].u = 1.0; texPoint[3].v = 0.0;
+
+		vertexTexBuff->Lock(sizeof(PointTex) * 4 * 4, sizeof(PointTex) * 4, &pBuff, 0);
+		memcpy(pBuff, texPoint, 4 * sizeof(PointTex));
+		vertexTexBuff->Unlock();
+
+		// top
+		texPoint[0].x = 0.0; texPoint[0].y = 1.0; texPoint[0].z = 0.0; texPoint[0].u = 0.0; texPoint[0].v = 0.0;
+		texPoint[1].x = 0.0; texPoint[1].y = 1.0; texPoint[1].z = 1.0; texPoint[1].u = 1.0; texPoint[1].v = 0.0;
+		texPoint[2].x = 1.0; texPoint[2].y = 1.0; texPoint[2].z = 0.0; texPoint[2].u = 0.0; texPoint[2].v = 1.0;
+		texPoint[3].x = 1.0; texPoint[3].y = 1.0; texPoint[3].z = 1.0; texPoint[3].u = 1.0; texPoint[3].v = 1.0;
+
+		vertexTexBuff->Lock(sizeof(PointTex) * 4 * 5, sizeof(PointTex) * 4, &pBuff, 0);
+		memcpy(pBuff, texPoint, 4 * sizeof(PointTex));
+		vertexTexBuff->Unlock();
+
+		// move camera form (0,0,0)
 		setView();
 
 	}
+
+	
 
 	void setView()
 	{
@@ -339,7 +389,7 @@ public:
 			1,0,0,0,
 			0,1,0,0,
 			0,0,1,0,
-			0,0,10,1,
+			2,0,10,1,
 		};
 		device->SetTransform(D3DTS_VIEW, &view);
 	}
@@ -352,7 +402,7 @@ public:
 		viewAngle += 0.01;
 		float b = viewAngle;
 		
-		// со временем крутим мировую матрицу
+		// turn world matrix in time
 		D3DMATRIX World =
 		{
 			cos(b) * cos(b), cos(b) * sin(b), sin(b), 0,
@@ -361,7 +411,7 @@ public:
 			0, 0, 0, 1 
 		};
 
-		// устанавливаем ее
+		// set it
 		device->SetTransform(D3DTS_WORLD, &World);
 
 		device->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE);
@@ -378,19 +428,45 @@ public:
 			0,
 			nTri
 		);
+		
 		// здесь должен был быть вывод текстур на сторонах, но он не получился
-		/*
-		device->SetTexture(0, texTop);
+		
+		device->SetTexture(0, texBottom);
 		device->SetStreamSource(0, vertexTexBuff, 0, sizeof(PointTex));
 		device->SetVertexShader(0);
 		device->SetFVF(D3DFVF_XYZ | D3DFVF_TEX1);
 		device->DrawPrimitive(D3DPT_TRIANGLESTRIP,0,2);
-		*/
-	//	device->SetTexture(0, texBottom);
-	//	device->SetStreamSource(0, vertexTexBuff, sizeof(PointTex)*4, sizeof(PointTex));
-	//	device->SetVertexShader(0);
-	//	device->SetFVF(D3DFVF_XYZ | D3DFVF_TEX1);
-	//	device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+
+		device->SetTexture(0, texSide);
+		device->SetStreamSource(0, vertexTexBuff, sizeof(PointTex) * 4 *1, sizeof(PointTex));
+		device->SetVertexShader(0);
+		device->SetFVF(D3DFVF_XYZ | D3DFVF_TEX1);
+		device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+		
+		device->SetTexture(0, texSide);
+		device->SetStreamSource(0, vertexTexBuff, sizeof(PointTex)*4*2, sizeof(PointTex));
+		device->SetVertexShader(0);
+		device->SetFVF(D3DFVF_XYZ | D3DFVF_TEX1);
+		device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+
+		device->SetTexture(0, texSide);
+		device->SetStreamSource(0, vertexTexBuff, sizeof(PointTex) * 4*3, sizeof(PointTex));
+		device->SetVertexShader(0);
+		device->SetFVF(D3DFVF_XYZ | D3DFVF_TEX1);
+		device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+
+		device->SetTexture(0, texSide);
+		device->SetStreamSource(0, vertexTexBuff, sizeof(PointTex) * 4 * 4, sizeof(PointTex));
+		device->SetVertexShader(0);
+		device->SetFVF(D3DFVF_XYZ | D3DFVF_TEX1);
+		device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+
+		device->SetTexture(0, texTop);
+		device->SetStreamSource(0, vertexTexBuff, sizeof(PointTex) * 4 * 5, sizeof(PointTex));
+		device->SetVertexShader(0);
+		device->SetFVF(D3DFVF_XYZ | D3DFVF_TEX1);
+		device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+
 	//	device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 
 		device->EndScene();
