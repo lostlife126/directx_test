@@ -1,7 +1,7 @@
 ﻿// WindowsProject1.cpp : Определяет точку входа для приложения.
 //
 
-// мои попытки работать с directx 3d.
+// my acquaintance with directx 3d.
 // 
 
 
@@ -155,7 +155,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_PAINT:
         {
-			renderer.rend();
+			renderer.draw();
         }
         break;
     case WM_DESTROY:

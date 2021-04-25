@@ -7,6 +7,15 @@
 #include <d3dx9.h>
 #pragma comment(lib, "d3dx9.lib")
 
+// TODO list
+// 1. rewrite code for dx11
+// 2. rewrite code with many good classes
+// 3. add camera control
+// 4. add texture loading
+// 5. add different figures
+// 6. make new TODO list
+
+
 // struct point (3d vector with color)
 struct Point
 {
@@ -112,14 +121,14 @@ public:
 class Renderer
 {
 public:
-	// материалы и текстуры для вывода текстур в будуще
-	//D3DMATERIAL9* material; 
 	// it's our textures of block (box) textures from minecraft
 	IDirect3DTexture9* texTop;
 	IDirect3DTexture9* texSide;
 	IDirect3DTexture9* texBottom;
 
-	std::vector<Box*> block; // в будущем тут будет много блоков как в майнкрафте
+	D3DMATERIAL9 mat; // not very good way to add materials...
+
+	std::vector<Box*> block; // may be one day there will be many blocks....
 
 	// vertexes and indices buffers
 	LPDIRECT3DVERTEXBUFFER9 vertexBuff = NULL; 
@@ -134,7 +143,7 @@ public:
 	IDirect3D9* d3d = nullptr;
 	IDirect3DDevice9* device = nullptr;
 
-	float viewAngle = 0.0; //угол поворота мировой атрицы
+	float viewAngle = 0.0; // angle of world matrix
 
 	// resolution and windowed mode
 	bool windowed = true;
@@ -149,7 +158,7 @@ public:
 
 	void init(HWND& hWnd_)
 	{
-		// standart using....
+		// standart way....
 		hWnd = hWnd_;
 		if ((d3d = Direct3DCreate9(D3D_SDK_VERSION)) == nullptr)
 		{
@@ -160,7 +169,8 @@ public:
 		ZeroMemory(&presentParams, sizeof(presentParams));
 		presentParams.BackBufferWidth = width;
 		presentParams.BackBufferHeight = height;
-
+		presentParams.AutoDepthStencilFormat = D3DFMT_D16;
+		presentParams.EnableAutoDepthStencil = true;
 		RECT wndRect;
 		RECT clientRect;
 
@@ -186,8 +196,8 @@ public:
 			&presentParams,
 			&device
 		);
-		// not use lighting and depth buffer
-		device->SetRenderState(D3DRS_LIGHTING, FALSE);  
+		// use lighting and depth buffer
+		device->SetRenderState(D3DRS_LIGHTING, TRUE);  
 		device->SetRenderState(D3DRS_ZENABLE, TRUE);
 
 		// projection matrix
@@ -229,6 +239,14 @@ public:
 			&vertexTexBuff,        
 			NULL
 		);
+
+		ZeroMemory(&mat, sizeof(D3DMATERIAL9));
+		mat.Diffuse.r = 255;
+		mat.Diffuse.g = 255;
+		mat.Diffuse.b = 255;
+		mat.Diffuse.a = 255;
+		mat.Ambient = mat.Diffuse;
+
 		
 	}
 	
@@ -290,7 +308,7 @@ public:
 		memcpy(pBuff, box->s, 6 * 4 * sizeof(Point));
 		vertexBuff->Unlock();
 		
-		// здесь сидят сарфейсы
+		// it is indices of points for surfaces
 		const unsigned short ind[] = 
 		{
 			0, 2, 1, 0, 3, 2, // red xx
@@ -299,17 +317,14 @@ public:
 		   13,12,14,14,12,15, // green
 		   17,16,18,18,16,19, // blue
 		   20,21,22,20,22,23  // blue
-		};
-		
-	//	const unsigned short ind[] = { 0,1,2,3,1,2 };
-	//	int nIndNew = 6;
+		}; // sorry but box colorless because light....
 
-		// собираем буфер индексов
+		// indices buffer
 	    indBuff->Lock(0, sizeof(short) * nIndNew, &pBuff, 0);
 		memcpy(pBuff, ind, nIndNew * sizeof(short));
 		indBuff->Unlock();
 
-		// запоминаем сколько добавили треугольников вершин индексов (в будущем понадобится)
+		// add count of triangles and points to total count
 		nTri += 12;
 		nVertex += nVertexNew;
 
@@ -375,12 +390,10 @@ public:
 		memcpy(pBuff, texPoint, 4 * sizeof(PointTex));
 		vertexTexBuff->Unlock();
 
-		// move camera form (0,0,0)
+		// move camera to (2,0,10)
 		setView();
 
 	}
-
-	
 
 	void setView()
 	{
@@ -394,14 +407,15 @@ public:
 		device->SetTransform(D3DTS_VIEW, &view);
 	}
 
-	void rend()
+	void draw()
 	{
-		device->Clear(1, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+		device->Clear(1, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 		device->BeginScene();
 
 		viewAngle += 0.01;
 		float b = viewAngle;
-		
+
+
 		// turn world matrix in time
 		D3DMATRIX World =
 		{
@@ -411,14 +425,37 @@ public:
 			0, 0, 0, 1 
 		};
 
+		// we make a light!
+		D3DLIGHT9 light;
+		ZeroMemory(&light, sizeof(D3DLIGHT9));
+		light.Type = D3DLIGHT_POINT;
+		light.Diffuse.r = light.Diffuse.g = light.Diffuse.b = light.Diffuse.a = 1.0;
+		light.Ambient = light.Diffuse;
+		light.Specular = light.Diffuse;
+		light.Range = 40.0;
+		light.Attenuation0 = 0.0;
+		light.Attenuation1 = 0.0;
+		light.Attenuation2 = 30.0;
+
+
+		light.Position = D3DXVECTOR3(3.0f, 0.0f, 0.0f);
+		//	light.Direction = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
+
+		device->SetLight(0, &light);
+		device->LightEnable(0, TRUE);
+		device->SetRenderState(D3DRS_LIGHTING, TRUE);
+
 		// set it
 		device->SetTransform(D3DTS_WORLD, &World);
 
 		device->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE);
 		
+		device->SetMaterial(&mat);
+
 		device->SetStreamSource(0, vertexBuff, 0, sizeof(Point));
 		device->SetIndices(indBuff);
-		// выводим наши треугольнички
+		/////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// draw our triangles. alas, but they are not colored because i make wrong light material for boxes
 		device->DrawIndexedPrimitive
 		(
 			D3DPT_TRIANGLELIST,
@@ -429,7 +466,7 @@ public:
 			nTri
 		);
 		
-		// здесь должен был быть вывод текстур на сторонах, но он не получился
+		// drawing box with texture minecraft grass
 		
 		device->SetTexture(0, texBottom);
 		device->SetStreamSource(0, vertexTexBuff, 0, sizeof(PointTex));
@@ -468,7 +505,7 @@ public:
 		device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 
 	//	device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-
+		device->SetRenderState(D3DRS_LIGHTING, FALSE);
 		device->EndScene();
 		device->Present(0, 0, 0, 0);
 	}
